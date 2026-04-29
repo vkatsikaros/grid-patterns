@@ -84,8 +84,10 @@ function renderGrid(gridEl, matrix, n, { showNumbers = false } = {}) {
       const cell = document.createElement('div');
       cell.className = `cell color-${COLOR_NAMES[color]}-${variant}`;
       if (showNumbers) {
+        // 15 unique numbers across 3 colors x 5 variants:
+        // A=1..5, B=6..10, C=11..15 (darkest -> lightest within each).
         cell.classList.add('numbered');
-        cell.textContent = variant;
+        cell.textContent = color * 5 + variant + 1;
       }
       frag.appendChild(cell);
     }
