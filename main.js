@@ -66,6 +66,21 @@ function randomSeedString() {
   return Math.floor(Math.random() * 0xFFFFFFFF).toString(36);
 }
 
+function updateCounts(matrix, n) {
+  const counts = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]];
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const { color, variant } = matrix[r][c];
+      counts[color][variant]++;
+    }
+  }
+  for (const el of document.querySelectorAll('.count')) {
+    const color = Number(el.dataset.color);
+    const variant = Number(el.dataset.variant);
+    el.textContent = counts[color][variant];
+  }
+}
+
 function run() {
   let seedStr = seedInput.value.trim();
   if (seedStr === '') {
@@ -76,6 +91,7 @@ function run() {
   const matrix = generateGrid({ n: N, rand });
   renderGrid(gridEl, matrix, N);
   renderGrid(gridNumbersEl, matrix, N, { showNumbers: true });
+  updateCounts(matrix, N);
   syncUrl();
 }
 
