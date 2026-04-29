@@ -25,11 +25,32 @@ body {
   flex-wrap: wrap;
 }
 
-#controls .colors label {
-  display: inline-flex;
+.color-group {
+  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   font-size: 14px;
+}
+
+.color-group .name {
+  min-width: 130px;
+}
+
+.color-group .hex {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #555;
+  min-width: 70px;
+}
+
+.swatches {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.swatch {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #ccc;
 }
 
 #controls input[type="color"] {

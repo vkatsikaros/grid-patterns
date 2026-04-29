@@ -9,10 +9,18 @@ const colorInputs = {
   c: document.getElementById('color-c'),
 };
 
+const hexLabels = {
+  a: document.getElementById('hex-a'),
+  b: document.getElementById('hex-b'),
+  c: document.getElementById('hex-c'),
+};
+
 function applyColors() {
-  document.documentElement.style.setProperty('--color-a', colorInputs.a.value);
-  document.documentElement.style.setProperty('--color-b', colorInputs.b.value);
-  document.documentElement.style.setProperty('--color-c', colorInputs.c.value);
+  for (const k of ['a', 'b', 'c']) {
+    const v = colorInputs[k].value;
+    document.documentElement.style.setProperty(`--color-${k}`, v);
+    hexLabels[k].textContent = v;
+  }
 }
 
 for (const input of Object.values(colorInputs)) {

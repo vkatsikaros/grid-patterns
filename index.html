@@ -12,10 +12,41 @@
       <input id="seed" type="text" placeholder="(auto)">
       <button id="regenerate" type="button">Regenerate</button>
     </div>
-    <div class="row colors">
-      <label><input id="color-a" type="color" value="#498fb2"> A &mdash; top</label>
-      <label><input id="color-b" type="color" value="#74a64a"> B &mdash; bottom-right</label>
-      <label><input id="color-c" type="color" value="#8b79d0"> C &mdash; top-left</label>
+    <div class="color-group">
+      <input id="color-a" type="color" value="#498fb2">
+      <span class="name">A &mdash; top</span>
+      <code class="hex" id="hex-a"></code>
+      <div class="swatches">
+        <span class="swatch color-a-0"></span>
+        <span class="swatch color-a-1"></span>
+        <span class="swatch color-a-2"></span>
+        <span class="swatch color-a-3"></span>
+        <span class="swatch color-a-4"></span>
+      </div>
+    </div>
+    <div class="color-group">
+      <input id="color-b" type="color" value="#74a64a">
+      <span class="name">B &mdash; bottom-right</span>
+      <code class="hex" id="hex-b"></code>
+      <div class="swatches">
+        <span class="swatch color-b-0"></span>
+        <span class="swatch color-b-1"></span>
+        <span class="swatch color-b-2"></span>
+        <span class="swatch color-b-3"></span>
+        <span class="swatch color-b-4"></span>
+      </div>
+    </div>
+    <div class="color-group">
+      <input id="color-c" type="color" value="#8b79d0">
+      <span class="name">C &mdash; top-left</span>
+      <code class="hex" id="hex-c"></code>
+      <div class="swatches">
+        <span class="swatch color-c-0"></span>
+        <span class="swatch color-c-1"></span>
+        <span class="swatch color-c-2"></span>
+        <span class="swatch color-c-3"></span>
+        <span class="swatch color-c-4"></span>
+      </div>
     </div>
     <div class="row">
       <label for="scale">Variation:</label>
