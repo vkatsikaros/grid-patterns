@@ -3,6 +3,7 @@ const N = 11;
 const seedInput = document.getElementById('seed');
 const regenerateBtn = document.getElementById('regenerate');
 const gridEl = document.getElementById('grid');
+const gridNumbersEl = document.getElementById('grid-numbers');
 const colorInputs = {
   a: document.getElementById('color-a'),
   b: document.getElementById('color-b'),
@@ -74,6 +75,7 @@ function run() {
   const rand = mulberry32(hashSeed(seedStr));
   const matrix = generateGrid({ n: N, rand });
   renderGrid(gridEl, matrix, N);
+  renderGrid(gridNumbersEl, matrix, N, { showNumbers: true });
   syncUrl();
 }
 

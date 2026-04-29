@@ -74,7 +74,7 @@ function generateGrid({ n, rand }) {
   return matrix;
 }
 
-function renderGrid(gridEl, matrix, n) {
+function renderGrid(gridEl, matrix, n, { showNumbers = false } = {}) {
   gridEl.style.setProperty('--n', n);
   gridEl.innerHTML = '';
   const frag = document.createDocumentFragment();
@@ -83,6 +83,10 @@ function renderGrid(gridEl, matrix, n) {
       const { color, variant } = matrix[r][c];
       const cell = document.createElement('div');
       cell.className = `cell color-${COLOR_NAMES[color]}-${variant}`;
+      if (showNumbers) {
+        cell.classList.add('numbered');
+        cell.textContent = variant;
+      }
       frag.appendChild(cell);
     }
   }
