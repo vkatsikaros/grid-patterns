@@ -4,10 +4,10 @@ const COLOR_NAMES = ['a', 'b', 'c'];
 // Higher k -> sharper falloff so corners trend toward pure colors.
 const BIAS_EXPONENT = 3;
 
-// 4 lightness variants per main color: 0=darker, 1=main, 2=lighter, 3=lightest.
-// Each has a preferred row position (0=top, 1=bottom). Soft bias only — we
-// want a mix, not strong clustering.
-const VARIANT_TARGETS = [0, 1 / 3, 2 / 3, 1];
+// 5 lightness variants per main color: 0=darkest, 1=darker, 2=main,
+// 3=lighter, 4=lightest. Each has a preferred row position (0=top, 1=bottom).
+// Soft bias only — we want a mix, not strong clustering.
+const VARIANT_TARGETS = [0, 0.25, 0.5, 0.75, 1];
 const VARIANT_BIAS_STRENGTH = 1.5;
 const VARIANT_BIAS_FLOOR = 0.2;
 
@@ -47,14 +47,14 @@ function pickVariant(row, n, rand) {
   const w = VARIANT_TARGETS.map(t =>
     Math.max(VARIANT_BIAS_FLOOR, 1 - VARIANT_BIAS_STRENGTH * Math.abs(y - t))
   );
-  const total = w[0] + w[1] + w[2] + w[3];
+  const total = w.reduce((a, b) => a + b, 0);
   const u = rand() * total;
   let acc = 0;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < w.length; i++) {
     acc += w[i];
     if (u < acc) return i;
   }
-  return 3;
+  return w.length - 1;
 }
 
 function generateGrid({ n, rand }) {
