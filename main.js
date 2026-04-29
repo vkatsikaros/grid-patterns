@@ -1,4 +1,5 @@
 const N = 11;
+const COLOR_KEYS = ['a', 'b', 'c'];
 
 const seedInput = document.getElementById('seed');
 const regenerateBtn = document.getElementById('regenerate');
@@ -21,9 +22,30 @@ const scaleValue = document.getElementById('scale-value');
 
 const HEX_RE = /^[0-9a-f]{6}$/i;
 
+// overrides[colorIdx][variantIdx] = '#rrggbb' | undefined
+const overrides = [{}, {}, {}];
+
+// 1x1 canvas to coerce any CSS color string (including oklch()) to RGB.
+const colorCanvas = document.createElement('canvas');
+colorCanvas.width = colorCanvas.height = 1;
+const colorCtx = colorCanvas.getContext('2d');
+
+function cssColorToHex(cssColor) {
+  colorCtx.clearRect(0, 0, 1, 1);
+  colorCtx.fillStyle = '#000';
+  colorCtx.fillStyle = cssColor;
+  colorCtx.fillRect(0, 0, 1, 1);
+  const [r, g, b] = colorCtx.getImageData(0, 0, 1, 1).data;
+  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+}
+
+function variantKey(color, variant) {
+  return `v${COLOR_KEYS[color]}${variant}`;
+}
+
 function loadFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  for (const k of ['a', 'b', 'c']) {
+  for (const k of COLOR_KEYS) {
     const v = params.get(k);
     if (v && HEX_RE.test(v)) colorInputs[k].value = '#' + v.toLowerCase();
   }
@@ -36,21 +58,34 @@ function loadFromUrl() {
   }
   const seed = params.get('seed');
   if (seed !== null) seedInput.value = seed;
+
+  for (let color = 0; color < 3; color++) {
+    for (let variant = 0; variant < 5; variant++) {
+      const v = params.get(variantKey(color, variant));
+      if (v && HEX_RE.test(v)) overrides[color][variant] = '#' + v.toLowerCase();
+    }
+  }
 }
 
 function syncUrl() {
   const params = new URLSearchParams();
   params.set('seed', seedInput.value);
-  for (const k of ['a', 'b', 'c']) {
+  for (const k of COLOR_KEYS) {
     params.set(k, colorInputs[k].value.replace(/^#/, ''));
   }
   params.set('scale', Number(scaleInput.value).toFixed(2));
+  for (let color = 0; color < 3; color++) {
+    for (let variant = 0; variant < 5; variant++) {
+      const o = overrides[color][variant];
+      if (o) params.set(variantKey(color, variant), o.replace(/^#/, ''));
+    }
+  }
   const url = `${window.location.pathname}?${params.toString()}`;
   window.history.replaceState(null, '', url);
 }
 
 function applyColors() {
-  for (const k of ['a', 'b', 'c']) {
+  for (const k of COLOR_KEYS) {
     const v = colorInputs[k].value;
     document.documentElement.style.setProperty(`--color-${k}`, v);
     hexLabels[k].textContent = v;
@@ -60,6 +95,47 @@ function applyColors() {
 function applyScale() {
   document.documentElement.style.setProperty('--scale', scaleInput.value);
   scaleValue.textContent = Number(scaleInput.value).toFixed(2);
+}
+
+function applyOverrides() {
+  for (let color = 0; color < 3; color++) {
+    for (let variant = 0; variant < 5; variant++) {
+      const cssVar = `--override-${COLOR_KEYS[color]}-${variant}`;
+      const o = overrides[color][variant];
+      if (o) {
+        document.documentElement.style.setProperty(cssVar, o);
+      } else {
+        document.documentElement.style.removeProperty(cssVar);
+      }
+      // Visual indicator on the swatch.
+      const swatch = document.querySelector(
+        `.swatch[data-color="${color}"][data-variant="${variant}"]`
+      );
+      if (swatch) swatch.classList.toggle('overridden', !!o);
+    }
+  }
+}
+
+function syncVariantInputs() {
+  // Populate each picker's current value so it opens at the right color.
+  // Read the swatch's resolved background so OKLCH values come through.
+  for (const input of document.querySelectorAll('.variant-picker')) {
+    const color = Number(input.dataset.color);
+    const variant = Number(input.dataset.variant);
+    const o = overrides[color][variant];
+    if (o) {
+      input.value = o;
+      continue;
+    }
+    const swatch = document.querySelector(
+      `.swatch[data-color="${color}"][data-variant="${variant}"]`
+    );
+    if (!swatch) continue;
+    const bg = getComputedStyle(swatch).backgroundColor;
+    try {
+      input.value = cssColorToHex(bg);
+    } catch (_) { /* ignore */ }
+  }
 }
 
 function randomSeedString() {
@@ -98,14 +174,36 @@ function run() {
 for (const input of Object.values(colorInputs)) {
   input.addEventListener('input', () => {
     applyColors();
+    syncVariantInputs();
     syncUrl();
   });
 }
 
 scaleInput.addEventListener('input', () => {
   applyScale();
+  syncVariantInputs();
   syncUrl();
 });
+
+for (const picker of document.querySelectorAll('.variant-picker')) {
+  picker.addEventListener('input', () => {
+    const color = Number(picker.dataset.color);
+    const variant = Number(picker.dataset.variant);
+    overrides[color][variant] = picker.value;
+    applyOverrides();
+    syncUrl();
+  });
+}
+
+for (const btn of document.querySelectorAll('.reset-variants')) {
+  btn.addEventListener('click', () => {
+    const color = Number(btn.dataset.color);
+    overrides[color] = {};
+    applyOverrides();
+    syncVariantInputs();
+    syncUrl();
+  });
+}
 
 regenerateBtn.addEventListener('click', () => {
   if (document.activeElement !== seedInput) seedInput.value = '';
@@ -119,4 +217,6 @@ seedInput.addEventListener('keydown', (e) => {
 loadFromUrl();
 applyColors();
 applyScale();
+applyOverrides();
+syncVariantInputs();
 run();

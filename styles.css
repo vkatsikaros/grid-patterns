@@ -58,7 +58,45 @@ body {
   width: 22px;
   height: 22px;
   border: 1px solid #ccc;
+  display: block;
 }
+
+.swatch-wrap {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.variant-picker {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+.swatch.overridden {
+  outline: 2px solid #333;
+  outline-offset: -2px;
+}
+
+.reset-variants {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 6px;
+  height: 22px;
+  align-self: flex-start;
+  color: #555;
+}
+.reset-variants:hover { background: #eee; }
 
 .variant .count {
   font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -127,21 +165,22 @@ body {
 }
 
 /* 5 variants per main color via OKLCH lightness offsets, scaled by --scale.
-   Browser handles the color math via relative color syntax. */
-.color-a-0 { background: oklch(from var(--color-a) calc(l - 0.14 * var(--scale)) c h); }
-.color-a-1 { background: oklch(from var(--color-a) calc(l - 0.07 * var(--scale)) c h); }
-.color-a-2 { background: var(--color-a); }
-.color-a-3 { background: oklch(from var(--color-a) calc(l + 0.07 * var(--scale)) c h); }
-.color-a-4 { background: oklch(from var(--color-a) calc(l + 0.14 * var(--scale)) c h); }
+   Browser handles the color math via relative color syntax. Per-variant
+   overrides via --override-x-N take precedence when set. */
+.color-a-0 { background: var(--override-a-0, oklch(from var(--color-a) calc(l - 0.14 * var(--scale)) c h)); }
+.color-a-1 { background: var(--override-a-1, oklch(from var(--color-a) calc(l - 0.07 * var(--scale)) c h)); }
+.color-a-2 { background: var(--override-a-2, var(--color-a)); }
+.color-a-3 { background: var(--override-a-3, oklch(from var(--color-a) calc(l + 0.07 * var(--scale)) c h)); }
+.color-a-4 { background: var(--override-a-4, oklch(from var(--color-a) calc(l + 0.14 * var(--scale)) c h)); }
 
-.color-b-0 { background: oklch(from var(--color-b) calc(l - 0.14 * var(--scale)) c h); }
-.color-b-1 { background: oklch(from var(--color-b) calc(l - 0.07 * var(--scale)) c h); }
-.color-b-2 { background: var(--color-b); }
-.color-b-3 { background: oklch(from var(--color-b) calc(l + 0.07 * var(--scale)) c h); }
-.color-b-4 { background: oklch(from var(--color-b) calc(l + 0.14 * var(--scale)) c h); }
+.color-b-0 { background: var(--override-b-0, oklch(from var(--color-b) calc(l - 0.14 * var(--scale)) c h)); }
+.color-b-1 { background: var(--override-b-1, oklch(from var(--color-b) calc(l - 0.07 * var(--scale)) c h)); }
+.color-b-2 { background: var(--override-b-2, var(--color-b)); }
+.color-b-3 { background: var(--override-b-3, oklch(from var(--color-b) calc(l + 0.07 * var(--scale)) c h)); }
+.color-b-4 { background: var(--override-b-4, oklch(from var(--color-b) calc(l + 0.14 * var(--scale)) c h)); }
 
-.color-c-0 { background: oklch(from var(--color-c) calc(l - 0.14 * var(--scale)) c h); }
-.color-c-1 { background: oklch(from var(--color-c) calc(l - 0.07 * var(--scale)) c h); }
-.color-c-2 { background: var(--color-c); }
-.color-c-3 { background: oklch(from var(--color-c) calc(l + 0.07 * var(--scale)) c h); }
-.color-c-4 { background: oklch(from var(--color-c) calc(l + 0.14 * var(--scale)) c h); }
+.color-c-0 { background: var(--override-c-0, oklch(from var(--color-c) calc(l - 0.14 * var(--scale)) c h)); }
+.color-c-1 { background: var(--override-c-1, oklch(from var(--color-c) calc(l - 0.07 * var(--scale)) c h)); }
+.color-c-2 { background: var(--override-c-2, var(--color-c)); }
+.color-c-3 { background: var(--override-c-3, oklch(from var(--color-c) calc(l + 0.07 * var(--scale)) c h)); }
+.color-c-4 { background: var(--override-c-4, oklch(from var(--color-c) calc(l + 0.14 * var(--scale)) c h)); }
