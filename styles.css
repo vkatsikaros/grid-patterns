@@ -100,8 +100,16 @@ body {
   align-items: center;
   justify-content: center;
   font: 600 clamp(10px, 2.5vw, 16px) ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: rgba(0, 0, 0, 0.85);
-  text-shadow: 0 0 2px rgba(255, 255, 255, 0.7);
+  color: #000;
+  text-shadow:
+    -1px -1px 0 #fff,
+     1px -1px 0 #fff,
+    -1px  1px 0 #fff,
+     1px  1px 0 #fff,
+     0   -1px 0 #fff,
+     0    1px 0 #fff,
+    -1px  0   0 #fff,
+     1px  0   0 #fff;
 }
 
 /* 5 variants per main color via OKLCH lightness offsets, scaled by --scale.

@@ -82,10 +82,7 @@ function renderGrid(gridEl, matrix, n, { showNumbers = false } = {}) {
     for (let c = 0; c < n; c++) {
       const { color, variant } = matrix[r][c];
       const cell = document.createElement('div');
-      // For the numbered grid, always paint the lightest variant so the
-      // number stays readable; the digit itself encodes the true variant.
-      const displayVariant = showNumbers ? 4 : variant;
-      cell.className = `cell color-${COLOR_NAMES[color]}-${displayVariant}`;
+      cell.className = `cell color-${COLOR_NAMES[color]}-${variant}`;
       if (showNumbers) {
         // 15 unique numbers across 3 colors x 5 variants:
         // A=1..5, B=6..10, C=11..15 (darkest -> lightest within each).
