@@ -8,6 +8,7 @@ body {
   --color-a: #498fb2;
   --color-b: #74a64a;
   --color-c: #8b79d0;
+  --scale: 1;
 }
 
 #controls {
@@ -39,10 +40,14 @@ body {
   cursor: pointer;
 }
 
-#controls input {
+#controls input[type="text"] {
   padding: 4px 8px;
   font: inherit;
   width: 220px;
+}
+
+#controls input[type="range"] {
+  width: 200px;
 }
 
 #controls button {
@@ -64,6 +69,19 @@ body {
   aspect-ratio: 1;
 }
 
-.color-a { background: var(--color-a); }
-.color-b { background: var(--color-b); }
-.color-c { background: var(--color-c); }
+/* 4 variants per main color via OKLCH lightness offsets, scaled by --scale.
+   Browser handles the color math via relative color syntax. */
+.color-a-0 { background: oklch(from var(--color-a) calc(l - 0.10 * var(--scale)) c h); }
+.color-a-1 { background: var(--color-a); }
+.color-a-2 { background: oklch(from var(--color-a) calc(l + 0.07 * var(--scale)) c h); }
+.color-a-3 { background: oklch(from var(--color-a) calc(l + 0.14 * var(--scale)) c h); }
+
+.color-b-0 { background: oklch(from var(--color-b) calc(l - 0.10 * var(--scale)) c h); }
+.color-b-1 { background: var(--color-b); }
+.color-b-2 { background: oklch(from var(--color-b) calc(l + 0.07 * var(--scale)) c h); }
+.color-b-3 { background: oklch(from var(--color-b) calc(l + 0.14 * var(--scale)) c h); }
+
+.color-c-0 { background: oklch(from var(--color-c) calc(l - 0.10 * var(--scale)) c h); }
+.color-c-1 { background: var(--color-c); }
+.color-c-2 { background: oklch(from var(--color-c) calc(l + 0.07 * var(--scale)) c h); }
+.color-c-3 { background: oklch(from var(--color-c) calc(l + 0.14 * var(--scale)) c h); }

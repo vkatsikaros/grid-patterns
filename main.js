@@ -20,6 +20,17 @@ for (const input of Object.values(colorInputs)) {
 }
 applyColors();
 
+const scaleInput = document.getElementById('scale');
+const scaleValue = document.getElementById('scale-value');
+
+function applyScale() {
+  document.documentElement.style.setProperty('--scale', scaleInput.value);
+  scaleValue.textContent = Number(scaleInput.value).toFixed(2);
+}
+
+scaleInput.addEventListener('input', applyScale);
+applyScale();
+
 function randomSeedString() {
   return Math.floor(Math.random() * 0xFFFFFFFF).toString(36);
 }

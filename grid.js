@@ -1,8 +1,15 @@
 // Color indices: 0 = A (blue, top), 1 = B (green, bottom-right), 2 = C (purple, top-left).
-const COLOR_CLASSES = ['color-a', 'color-b', 'color-c'];
+const COLOR_NAMES = ['a', 'b', 'c'];
 
 // Higher k -> sharper falloff so corners trend toward pure colors.
 const BIAS_EXPONENT = 3;
+
+// 4 lightness variants per main color: 0=darker, 1=main, 2=lighter, 3=lightest.
+// Each has a preferred row position (0=top, 1=bottom). Soft bias only — we
+// want a mix, not strong clustering.
+const VARIANT_TARGETS = [0, 1 / 3, 2 / 3, 1];
+const VARIANT_BIAS_STRENGTH = 1.5;
+const VARIANT_BIAS_FLOOR = 0.2;
 
 function biasWeights(row, col, n) {
   const y = n === 1 ? 0 : row / (n - 1);
@@ -22,8 +29,6 @@ function pickColor(weights, forbidden, rand) {
 
   let total = w[0] + w[1] + w[2];
   if (total === 0) {
-    // Defensive: positional weights all zero (corner degeneracy). Pick
-    // uniformly from non-forbidden indices.
     const allowed = [0, 1, 2].filter(i => !forbidden.includes(i));
     return allowed[Math.floor(rand() * allowed.length)];
   }
@@ -37,14 +42,33 @@ function pickColor(weights, forbidden, rand) {
   return 2;
 }
 
+function pickVariant(row, n, rand) {
+  const y = n === 1 ? 0.5 : row / (n - 1);
+  const w = VARIANT_TARGETS.map(t =>
+    Math.max(VARIANT_BIAS_FLOOR, 1 - VARIANT_BIAS_STRENGTH * Math.abs(y - t))
+  );
+  const total = w[0] + w[1] + w[2] + w[3];
+  const u = rand() * total;
+  let acc = 0;
+  for (let i = 0; i < 4; i++) {
+    acc += w[i];
+    if (u < acc) return i;
+  }
+  return 3;
+}
+
 function generateGrid({ n, rand }) {
+  // Each cell consumes exactly 2 PRNG draws (color, variant) in row-major
+  // order — keep this stable for seed reproducibility.
   const matrix = Array.from({ length: n }, () => new Array(n));
   for (let r = 0; r < n; r++) {
     for (let c = 0; c < n; c++) {
       const forbidden = [];
-      if (c > 0) forbidden.push(matrix[r][c - 1]);
-      if (r > 0) forbidden.push(matrix[r - 1][c]);
-      matrix[r][c] = pickColor(biasWeights(r, c, n), forbidden, rand);
+      if (c > 0) forbidden.push(matrix[r][c - 1].color);
+      if (r > 0) forbidden.push(matrix[r - 1][c].color);
+      const color = pickColor(biasWeights(r, c, n), forbidden, rand);
+      const variant = pickVariant(r, n, rand);
+      matrix[r][c] = { color, variant };
     }
   }
   return matrix;
@@ -56,8 +80,9 @@ function renderGrid(gridEl, matrix, n) {
   const frag = document.createDocumentFragment();
   for (let r = 0; r < n; r++) {
     for (let c = 0; c < n; c++) {
+      const { color, variant } = matrix[r][c];
       const cell = document.createElement('div');
-      cell.className = `cell ${COLOR_CLASSES[matrix[r][c]]}`;
+      cell.className = `cell color-${COLOR_NAMES[color]}-${variant}`;
       frag.appendChild(cell);
     }
   }
