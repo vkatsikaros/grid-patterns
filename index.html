@@ -7,9 +7,16 @@
 </head>
 <body>
   <div id="controls">
-    <label for="seed">Seed:</label>
-    <input id="seed" type="text" placeholder="(auto)">
-    <button id="regenerate" type="button">Regenerate</button>
+    <div class="row">
+      <label for="seed">Seed:</label>
+      <input id="seed" type="text" placeholder="(auto)">
+      <button id="regenerate" type="button">Regenerate</button>
+    </div>
+    <div class="row colors">
+      <label><input id="color-a" type="color" value="#498fb2"> A &mdash; top</label>
+      <label><input id="color-b" type="color" value="#74a64a"> B &mdash; bottom-right</label>
+      <label><input id="color-c" type="color" value="#8b79d0"> C &mdash; top-left</label>
+    </div>
   </div>
   <div id="grid"></div>
 

@@ -4,11 +4,39 @@ body {
   background: #f7f7f8;
 }
 
+:root {
+  --color-a: #498fb2;
+  --color-b: #74a64a;
+  --color-c: #8b79d0;
+}
+
 #controls {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
   margin-bottom: 16px;
+}
+
+#controls .row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#controls .colors label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+#controls input[type="color"] {
+  width: 32px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #ccc;
+  cursor: pointer;
 }
 
 #controls input {
@@ -36,6 +64,6 @@ body {
   aspect-ratio: 1;
 }
 
-.color-a { background: #498fb2; }
-.color-b { background: #74a64a; }
-.color-c { background: #8b79d0; }
+.color-a { background: var(--color-a); }
+.color-b { background: var(--color-b); }
+.color-c { background: var(--color-c); }
